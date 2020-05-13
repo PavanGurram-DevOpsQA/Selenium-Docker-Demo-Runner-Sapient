@@ -1,0 +1,48 @@
+version: "3"
+services:
+  hub:
+    image: selenium/hub:3.14
+      # ports: # Helpful to see on local but not on remote so comment
+      # when tests are run on remote
+    # - "4444:4444"
+  chrome:
+    image: selenium/node-chrome:3.14
+    depends_on:
+      - hub
+    environment:
+      - HUB_HOST=hub
+  firefox:
+    image: selenium/node-firefox:3.14
+    depends_on:
+      - hub
+    environment:
+      - HUB_HOST=hub
+    volumes:
+      - ./gridDir:/home/sapient/demo/grid
+  testng-module-chrome:
+    image: pavangurram/docker-integration
+    depends_on:
+      - chrome
+      - firefox
+    environment:
+      - ENVIRONMENT=grid
+      - BROWSER=chrome
+      # This registers to docker selenium grid created by above hub service.
+      # If you want to use existing grid (not a docker) which is hosted in
+      # another machine then simply use that ip adress replacing hub here
+      - HUB_HOST=hub
+      - MODULE=testng.xml
+    volumes:
+      - ./RunReports/SeleniumGridExecutionReports/Chrome:/usr/sapient/demo/test-output
+  testng-module-firefox:
+    image: pavangurram/docker-integration
+    depends_on:
+      - chrome
+      - firefox
+    environment:
+      - ENVIRONMENT=grid
+      - BROWSER=firefox
+      - HUB_HOST=hub
+      - MODULE=testng.xml
+    volumes:
+      - ./RunReports/SeleniumGridExecutionReports/Firefox:/usr/sapient/demo/test-output
