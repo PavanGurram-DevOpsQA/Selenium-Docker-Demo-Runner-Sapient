@@ -21,7 +21,7 @@ pipeline {
         always{
             archiveArtifacts artifacts: 'RunReports/**'
             /* Stop Grid - It is not mentioned as a stage above because when you kill the long running hung
-               jobs at stage 'RunTests', it won't execute next following stages and comes directly to 'post' */
+               jobs at stage 'RunTests', it won't execute next following stages and comes directly to 'Post' */
             sh "docker-compose down"
         }
     }
